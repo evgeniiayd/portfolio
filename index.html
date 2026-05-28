@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мое Портфолио</title>
+    <style>
+        :root {
+            --primary-color: #ec4899; /* Яркий розовый */
+            --primary-hover: #be185d; /* Темно-розовый для наведения */
+            --bg-color: #fdf2f8;      /* Очень бледный розовый фон */
+            --card-bg: #ffffff;       /* Белый цвет карточек */
+            --text-main: #1e293b;     /* Темный текст */
+            --text-secondary: #64748b; /* Серый текст */
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Navigation / Breadcrumbs */
+        .nav-bar {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background-color: #eff6ff;
+        }
+
+        .back-btn.hidden {
+            display: none;
+        }
+
+        .breadcrumb {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            color: var(--text-main);
+            border-left: 5px solid var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Cards (Modules & Disciplines) */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Assignments List */
+        .assignment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .assignment-item {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .assignment-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .assignment-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .assignment-btn::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        .assignment-item.active .assignment-btn::after {
+            transform: rotate(45deg);
+        }
+
+        .assignment-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .assignment-inner {
+            padding: 1.5rem;
+        }
+
+        .assignment-text {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .file-link:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .grid { grid-template-columns: 1fr; }
+            .nav-bar { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="student-name">Яблонская Евгения</h1>
+        <p id="university-name">РГПУ им. Герцена</p>
+    </header>
+
+    <div class="nav-bar">
+        <button id="back-btn" class="back-btn hidden" onclick="goBack()">
+            ← Назад
+        </button>
+        <span id="breadcrumb" class="breadcrumb">Главная</span>
+    </div>
+
+    <main id="app">
+        <!-- Контент будет генерироваться здесь через JavaScript -->
+    </main>
+
+    <footer>
+        &copy; 2025 Портфолио студента. Сделано с помощью GitHub Pages.
+    </footer>
+
+    <script>
+        const config = {
+            name: "Яблонская Евгения Дмитриевна",
+            university: "РГПУ им. Герцена"
+        };
+
+        // Структура данных: Модули -> Дисциплины -> Задания
+        const portfolioData = [
+            {
+                id: "module-programming",
+                title: "Программирование",
+                disciplines: [
+                    { id: "prog-2", title: "2-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},                      
+                    { id: "prog-3", title: "3-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},
+                    { id: "prog-4", title: "4-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},
+                    { id: "prog-5", title: "5-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},
+                    { id: "prog-6", title: "6-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},
+                    { id: "prog-7", title: "7-ий семестр", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]}                  
+                ]
+            },
+            {
+                id: "module-cultural",
+                title: "Модуль 'Общекультурный мировоззренческий экономический'",
+                disciplines: [
+                    { id: "phil", title: "Философия", assignments: [
+                        { title: "Эссе на тему бытия", desc: "Написать эссе о категориях бытия в античной философии.", file: "#" },
+                        { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
+                    ]},
+                    { id: "econ", title: "Экономика", assignments: [
+                        { title: "Анализ рынка", desc: "Провести микроэкономический анализ рынка smartphones.", file: "#" }
+                    ]},
+                    { id: "eng", title: "Иностранный язык", assignments: [
+                        { title: "Technical Writing", desc: "Написать резюме на английском языке (CV).", file: "#" }
+                    ]},
+                    { id: "life-safety", title: "Безопасность жизнедеятельности", assignments: [
+                        { title: "План эвакуации", desc: "Разработать схему эвакуации из 5-этажного здания.", file: "#" }
+                    ]},
+                    { id: "history", title: "История", assignments: [
+                        { title: "Доклад: История IT", desc: "История развития вычислительных машин с 1940 года.", file: "#" }
+                    ]},
+                    { id: "sport", title: "Физическая культура и спорт", assignments: [
+                        { title: "Контрольные нормативы", desc: "Сдача нормативов по бегу и силовым упражнениям.", file: "#" }
+                    ]}
+                ]
+            },
+            {
+                id: "module-architecture",
+                title: "Модуль 'Организация и архитектура ЭВМ'",
+                disciplines: [
+                    { id: "comp-tech", title: "Вычислительная техника", assignments: [
+                        { title: "Лабораторная №1: Логические схемы", desc: "Проектирование сумматора в Multisim.", file: "#" }
+                    ]},
+                    { id: "os", title: "Операционные системы", assignments: [
+                        { title: "Курсовая: Управление памятью", desc: "Реализация алгоритма подкачки страниц.", file: "#" }
+                    ]},
+                    { id: "networks", title: "Сети и телекоммуникации", assignments: [
+                        { title: "Настройка Cisco Packet Tracer", desc: "Построение локальной сети с маршрутизацией.", file: "#" }
+                    ]},
+                    { id: "ml", title: "Основы машинного обучения", assignments: [
+                        { title: "Линейная регрессия", desc: "Прогнозирование цен на жилье с помощью Python.", file: "#" }
+                    ]},
+                    { id: "infosec", title: "Защита информации", assignments: [
+                        { title: "Шифрование данных", desc: "Реализация шифра AES на языке C++.", file: "#" }
+                    ]},
+                    { id: "viz", title: "Техники и технологии визуализации данных", assignments: [
+                        { title: "Дашборд в Tableau", desc: "Визуализация данных о продажах.", file: "#" }
+                    ]}
+                ]
+            },
+            {
+                id: "module-math",
+                title: "Модуль 'Математика для инженеров'",
+                disciplines: [
+                    { id: "lin-alg", title: "Линейная алгебра и теория матриц", assignments: [{ title: "Решение СЛАУ", desc: "Метод Гаусса.", file: "#" }] },
+                    { id: "math-an", title: "Математический анализ", assignments: [{ title: "Пределы", desc: "Вычисление пределов функций.", file: "#" }] },
+                    { id: "geom", title: "Аналитическая геометрия", assignments: [{ title: "Кривые второго порядка", desc: "Исследование гиперболы.", file: "#" }] },
+                    { id: "diff", title: "Интегралы и дифференциальные уравнения", assignments: [{ title: "Неопределенные интегралы", desc: "Метод замены переменной.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-info-phys",
+                title: "Модуль 'Информатика и физика для инженеров'",
+                disciplines: [
+                    { id: "phys", title: "Физика", assignments: [{ title: "Механика", desc: "Решение задач по кинематике.", file: "#" }] },
+                    { id: "inf", title: "Информатика", assignments: [{ title: "Алгоритмы", desc: "Блок-схемы сортировки.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-graphics",
+                title: "Модуль 'Компьютерная графика и управление информацией'",
+                disciplines: [
+                    { id: "db", title: "Базы данных", assignments: [{ title: "SQL запросы", desc: "Создание базы данных библиотеки.", file: "#" }] },
+                    { id: "math-graph", title: "Математические основы компьютерной графики", assignments: [{ title: "Геометрия 3D", desc: "Матрицы поворота.", file: "#" }] },
+                    { id: "comp-graph", title: "Компьютерная графика", assignments: [{ title: "Рендеринг", desc: "Создание сцены в Blender.", file: "#" }] },
+                    { id: "eng-graph", title: "Инженерная графика", assignments: [{ title: "Черчение", desc: "Компас-3D. Деталирование.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-calc",
+                title: "Модуль 'Технологии и методы вычислений'",
+                disciplines: [
+                    { id: "num-math", title: "Вычислительная математика", assignments: [{ title: "Численные методы", desc: "Решение нелинейных уравнений.", file: "#" }] },
+                    { id: "data-sc", title: "Анализ данных и основы Data science", assignments: [{ title: "Pandas", desc: "Обработка датасета Titanic.", file: "#" }] },
+                    { id: "modeling", title: "Технологии компьютерного моделирования", assignments: [{ title: "Модель системы", desc: "Simulink модель.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-web",
+                title: "Модуль 'Проектирование и разработка веб-решений'",
+                disciplines: [
+                    { id: "web-design", title: "Веб-проектирование и веб-языки", assignments: [{ title: "HTML/CSS сайт", desc: "Создание лендинга.", file: "#" }] },
+                    { id: "web-practice", title: "Компьютерный практикум", assignments: [{ title: "JS скрипты", desc: "Интерактивность на странице.", file: "#" }] },
+                    { id: "server", title: "Серверные веб-технологии", assignments: [{ title: "Node.js", desc: "Простой REST API.", file: "#" }] },
+                    { id: "rich-ui", title: "Разработка интерфейсов обогащенных веб-приложений", assignments: [{ title: "SPA", desc: "React приложение.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-discrete",
+                title: "Модуль 'Дискретные структуры'",
+                disciplines: [
+                    { id: "disc-math", title: "Дискретная математика для программистов", assignments: [{ title: "Графы", desc: "Алгоритм Дейкстры.", file: "#" }] },
+                    { id: "logic", title: "Математическая логика и теория алгоритмов", assignments: [{ title: "Булевы функции", desc: "Минимизация Карты Карно.", file: "#" }] },
+                    { id: "prob", title: "Теория вероятности и комбинаторика", assignments: [{ title: "Комбинаторика", desc: "Задачи на перестановки.", file: "#" }] },
+                    { id: "alg", title: "Алгоритмы и решение задач", assignments: [{ title: "Сортировка", desc: "Анализ сложности QuickSort.", file: "#" }] },
+                    { id: "coding", title: "Основы теории кодирования", assignments: [{ title: "Код Хемминга", desc: "Исправление ошибок.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-it",
+                title: "Модуль 'Информационные технологии'",
+                disciplines: [
+                    { id: "pub", title: "Техника и технологии представления и публикации информации", assignments: [{ title: "LaTeX", desc: "Научная статья.", file: "#" }] },
+                    { id: "it-lang", title: "Информационные технологии в изучении иностранных языков", assignments: [{ title: "Duolingo report", desc: "Отчет о прогрессе.", file: "#" }] },
+                    { id: "doc-flow", title: "Методы и средства защиты в системах электронного документооборота", assignments: [{ title: "ЭЦП", desc: "Подписание документа.", file: "#" }] },
+                    { id: "tech-doc", title: "Системы и технологии подготовки технической и издательской документации", assignments: [{ title: "Техническое задание", desc: "ТЗ на ПО.", file: "#" }] },
+                    { id: "app-it", title: "Прикладные информационные технологии", assignments: [{ title: "Excel", desc: "Сложные формулы и сводные таблицы.", file: "#" }] },
+                    { id: "prof-it", title: "Информационные технологии в профессиональной деятельности", assignments: [{ title: "Отчет", desc: "Использование IT в специальности.", file: "#" }] },
+                    { id: "corp-learn", title: "Основы корпоративного электронного обучения", assignments: [{ title: "LMS", desc: "Разработка курса в Moodle.", file: "#" }] },
+                    { id: "dist-learn", title: "Технологии дистанционного обучения", assignments: [{ title: "Zoom/Teams", desc: "Проведение вебинара.", file: "#" }] },
+                    { id: "bus-an", title: "Информационные технологии и системы бизнес-аналитики", assignments: [{ title: "BI системы", desc: "Дашборд продаж.", file: "#" }] },
+                    { id: "e-gov", title: "Модели электронного управления", desc: "Электронное правительство.", file: "#" }
+                ]
+            },
+            {
+                id: "module-res",
+                title: "Модуль 'Информационные ресурсы и средства профессиональной деятельности инженера'",
+                disciplines: [
+                    { id: "stat", title: "Пакеты прикладных программ для статистической обработки и анализа данных", assignments: [{ title: "SPSS", desc: "Статистический анализ.", file: "#" }] },
+                    { id: "dig-lib", title: "Мировые информационные ресурсы и цифровые библиотеки", assignments: [{ title: "Поиск информации", desc: "Работа с eLibrary.", file: "#" }] },
+                    { id: "edu-env", title: "Организация электронной образовательной среды", assignments: [{ title: "Сетевое взаимодействие", desc: "План внедрения.", file: "#" }] },
+                    { id: "soc-it", title: "Социальные и профессиональные вопросы информатики и ИТ", assignments: [{ title: "Этика", desc: "Кодекс этики IT-специалиста.", file: "#" }] },
+                    { id: "deep-learn", title: "Математические основы глубокого обучения", assignments: [{ title: "Neural Networks", desc: "Простая нейросеть.", file: "#" }] },
+                    { id: "pm", title: "Управление программными проектами", assignments: [{ title: "Agile", desc: "Scrum процесс.", file: "#" }] },
+                    { id: "se", title: "Процессы разработки программного обеспечения", assignments: [{ title: "SDLC", desc: "Жизненный цикл ПО.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-math-phys-it",
+                title: "Модуль 'Информационные технологии в математике и физике'",
+                disciplines: [
+                    { id: "it-math", title: "Информационные технологии в математике", assignments: [{ title: "Mathematica", desc: "Символьные вычисления.", file: "#" }] },
+                    { id: "it-phys", title: "Информационные технологии в физике", assignments: [{ title: "Моделирование", desc: "Физические процессы в Python.", file: "#" }] },
+                    { id: "it-gen", title: "Информационные технологии", assignments: [{ title: "Обзор", desc: "Современные тренды.", file: "#" }] },
+                    { id: "comp-alg", title: "Основы компьютерной алгебры", assignments: [{ title: "Maple", desc: "Решение уравнений.", file: "#" }] },
+                    { id: "sys-math", title: "Системы компьютерной математики", assignments: [{ title: "Matlab", desc: "Работа с матрицами.", file: "#" }] },
+                    { id: "stat-soft", title: "Пакеты прикладных программ для статистической обработки и анализа данных", assignments: [{ title: "R", desc: "Визуализация данных.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-it-mgmt",
+                title: "Модуль 'Информационные технологии в управлении в IT-компании'",
+                disciplines: [
+                    { id: "hr-it", title: "Информационные технологии оценки персонала", assignments: [{ title: "Тестирование", desc: "Система оценки.", file: "#" }] },
+                    { id: "recruit", title: "IT-рекрутмент", assignments: [{ title: "Собеседование", desc: "Скрининг кандидатов.", file: "#" }] },
+                    { id: "biz-inf", title: "Основы бизнес-информатики", assignments: [{ title: "Архитектура предприятия", desc: "Zachman framework.", file: "#" }] },
+                    { id: "reing", title: "Реинжиниринг и инновации в сфере IT", assignments: [{ title: "Case study", desc: "Оптимизация процесса.", file: "#" }] },
+                    { id: "it-mgmt", title: "IT-менеджмент", assignments: [{ title: "Стратегия", desc: "IT стратегия компании.", file: "#" }] },
+                    { id: "mgmt", title: "Менеджмент", assignments: [{ title: "Теория", desc: "Школы менеджмента.", file: "#" }] },
+                    { id: "intel-prop", title: "Интеллектуальная собственность", assignments: [{ title: "Патенты", desc: "Регистрация ПО.", file: "#" }] },
+                    { id: "it-econ", title: "Информационные технологии в экономике и управлении", assignments: [{ title: "ERP", desc: "Внедрение 1С.", file: "#" }] },
+                    { id: "e-gov-mgmt", title: "Основы электронного управления", assignments: [{ title: "G2B", desc: "Госуслуги.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-research",
+                title: "Модуль 'Учебно-исследовательский'",
+                disciplines: [
+                    { id: "tech-prac", title: "Учебно-технологический практикум", assignments: [{ title: "Проект", desc: "Разработка устройства.", file: "#" }] },
+                    { id: "sci-proj", title: "Научно-исследовательский проект", assignments: [{ title: "Статья", desc: "Публикация в сборнике.", file: "#" }] },
+                    { id: "spec-lang", title: "Языки написания спецификаций", assignments: [{ title: "UML", desc: "Диаграммы классов.", file: "#" }] },
+                    { id: "eng-calc", title: "Информационные средства и технологии инженерных и научных расчетов", assignments: [{ title: "ANSYS", desc: "Моделирование напряжений.", file: "#" }] },
+                    { id: "econometrics", title: "Эконометрика", assignments: [{ title: "Регрессия", desc: "Экономические модели.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-it-sys",
+                title: "Модуль 'Информационные технологии и системы'",
+                disciplines: [
+                    { id: "math-edu", title: "Математические методы для исследования сферы образования", assignments: [{ title: "Статистика", desc: "Анализ успеваемости.", file: "#" }] },
+                    { id: "know-eng", title: "Инженерия знаний", assignments: [{ title: "Экспертные системы", desc: "База знаний.", file: "#" }] },
+                    { id: "edu-eng", title: "Образовательный инжиниринг", assignments: [{ title: "Педагогический дизайн", desc: "Разработка курса.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-lang",
+                title: "Модуль 'Особенности профеcсиональной иноязычной коммуникации'",
+                disciplines: [
+                    { id: "ling", title: "Лингвистические основы иноязычной коммуникации", assignments: [{ title: "Перевод", desc: "Технический перевод.", file: "#" }] },
+                    { id: "trans-prac", title: "Практикум по письменному переводу профессионально-ориентированных текстов", assignments: [{ title: "Глоссарий", desc: "Терминология.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-facultative",
+                title: "Факультативные дисциплины",
+                disciplines: [
+                    { id: "first-aid", title: "Первая помощь при заболеваниях и травмах", assignments: [{ title: "Алгоритм", desc: "Оказание первой помощи.", file: "#" }] },
+                    { id: "ethics", title: "Этика безопасности", assignments: [{ title: "Реферат", desc: "Этические нормы.", file: "#" }] },
+                    { id: "drugs", title: "Профилактика наркозависимости в молодежной среде", assignments: [{ title: "Презентация", desc: "Профилактика.", file: "#" }] },
+                    { id: "corrupt", title: "Противодействие коррупции", assignments: [{ title: "Тест", desc: "Знание закона.", file: "#" }] },
+                    { id: "extremism", title: "Современный молодежный экстремизм", assignments: [{ title: "Доклад", desc: "Причины и следствия.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-practice",
+                title: "Практики",
+                disciplines: [
+                    { id: "prac-tech", title: "Учебная практика (технологическая)", assignments: [{ title: "Отчет", desc: "По итогам практики.", file: "#" }] },
+                    { id: "prac-exp", title: "Учебная практика (эксплуатационная)", assignments: [{ title: "Дневник", desc: "Дневник практики.", file: "#" }] },
+                    { id: "prac-prod", title: "Производственная практика (технологическая)", assignments: [{ title: "Характеристика", desc: "С места практики.", file: "#" }] },
+                    { id: "prac-sci", title: "Производственная практика (НИР)", assignments: [{ title: "Научный отчет", desc: "Результаты исследования.", file: "#" }] },
+                    { id: "prac-pre", title: "Преддипломная практика", assignments: [{ title: "ВКР", desc: "Материалы к диплому.", file: "#" }] }
+                ]
+            },
+            {
+                id: "module-final",
+                title: "Государственная итоговая аттестация",
+                disciplines: [
+                    { id: "gia", title: "ГИА", assignments: [{ title: "Дипломная работа", desc: "Выпускная квалификационная работа.", file: "#" }] }
+                ]
+            }
+        ];
+
+        // --- ЛОГИКА ПРИЛОЖЕНИЯ ---
+
+        const app = document.getElementById('app');
+        const backBtn = document.getElementById('back-btn');
+        const breadcrumb = document.getElementById('breadcrumb');
+
+        // Состояние навигации
+        let currentView = 'home'; // home, module, discipline
+        let currentModuleId = null;
+        let currentDisciplineId = null;
+
+        // Инициализация
+        document.getElementById('student-name').textContent = config.name;
+        document.getElementById('university-name').textContent = config.university;
+        renderHome();
+
+        // Рендер главной страницы (Модули)
+        function renderHome() {
+            currentView = 'home';
+            currentModuleId = null;
+            currentDisciplineId = null;
+            updateNav('Главная');
+
+            let html = `<h2 class="section-title">Мои Модули</h2><div class="grid">`;
+            
+            portfolioData.forEach(module => {
+                html += `
+                    <div class="card" onclick="openModule('${module.id}')">
+                        <h3>${module.title}</h3>
+                        <p>${module.disciplines.length} дисциплин</p>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            app.innerHTML = html;
+        }
+
+        // Рендер страницы модуля (Дисциплины)
+        function openModule(moduleId) {
+            const module = portfolioData.find(m => m.id === moduleId);
+            if (!module) return;
+
+            currentView = 'module';
+            currentModuleId = moduleId;
+            updateNav(module.title);
+
+            let html = `<h2 class="section-title">${module.title}</h2><div class="grid">`;
+            
+            module.disciplines.forEach(disc => {
+                html += `
+                    <div class="card" onclick="openDiscipline('${moduleId}', '${disc.id}')">
+                        <h3>${disc.title}</h3>
+                        <p>${disc.assignments.length} заданий</p>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            app.innerHTML = html;
+        }
+
+        // Рендер страницы дисциплины (Задания)
+        function openDiscipline(moduleId, discId) {
+            const module = portfolioData.find(m => m.id === moduleId);
+            const disc = module.disciplines.find(d => d.id === discId);
+            if (!disc) return;
+
+            currentView = 'discipline';
+            currentDisciplineId = discId;
+            updateNav(disc.title);
+
+            let html = `<h2 class="section-title">${disc.title}</h2><div class="assignment-list">`;
+            
+            disc.assignments.forEach((assign, index) => {
+                html += `
+                    <div class="assignment-item">
+                        <button class="assignment-btn" onclick="toggleAssignment(this)">
+                            ${assign.title}
+                        </button>
+                        <div class="assignment-content">
+                            <div class="assignment-inner">
+                                <p class="assignment-text">${assign.desc}</p>
+                                <!-- Замените # на реальную ссылку на файл, например: files/report.pdf -->
+                                <a href="${assign.file}" target="_blank" class="file-link">
+                                    📄 Скачать задание
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            app.innerHTML = html;
+        }
+
+        function toggleAssignment(btn) {
+            const item = btn.parentElement;
+            const content = item.querySelector('.assignment-content');
+            
+            // Закрыть другие (опционально, если нужно, чтобы было открыто только одно)
+            // document.querySelectorAll('.assignment-item').forEach(el => {
+            //     if(el !== item) {
+            //         el.classList.remove('active');
+            //         el.querySelector('.assignment-content').style.maxHeight = null;
+            //     }
+            // });
+
+            item.classList.toggle('active');
+            if (item.classList.contains('active')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+
+        // Кнопка "Назад"
+        function goBack() {
+            if (currentView === 'discipline') {
+                openModule(currentModuleId);
+            } else if (currentView === 'module') {
+                renderHome();
+            }
+        }
+
+        function updateNav(title) {
+            breadcrumb.textContent = title;
+            if (currentView === 'home') {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
