@@ -289,7 +289,7 @@
                         { title: "Лабораторная работа 6", desc: "Файловый ввод-вывод.", file: "sem-2/prog-C/Яблонская_Евгения_Дмитриевна_курс_1_ЛР_6.pdf" }
                     ]},                      
                     { id: "prog-3", title: "3-ий семестр", assignments: [
-                        { title: "Лабораторные работы 1-2", desc: "Калькулятор [Репозиторий](https://github.com/evgeniiayd/portfolio/tree/main/sem-3/prog/lr1-2)", file: "sem-3/prog/lr1-2/Яблонская_Евгения_Дмитриевна_курс_2_ЛР1_2.pdf" },
+                        { title: "Лабораторные работы 1-2", desc: "Калькулятор.", file: "sem-3/prog/lr1-2/Яблонская_Евгения_Дмитриевна_курс_2_ЛР1_2.pdf", repo: "https://github.com/evgeniiayd/portfolio/tree/main/sem-3/prog/lr1-2" },
                         { title: "Реферат: Этика Канта", desc: "Подготовить презентацию и доклад по этике Иммануила Канта.", file: "#" }
                     ]},
                     { id: "prog-4", title: "4-ий семестр", assignments: [
@@ -601,10 +601,31 @@
             currentView = 'discipline';
             currentDisciplineId = discId;
             updateNav(disc.title);
-
+            
             let html = `<h2 class="section-title">${disc.title}</h2><div class="assignment-list">`;
             
             disc.assignments.forEach((assign, index) => {
+                let buttonsHtml = '';
+                
+                if (assign.repo) {
+                    buttonsHtml += `
+                        <a href="${assign.repo}" target="_blank" class="file-link" style="background-color: #24292e; margin-right: 10px;">
+                            GitHub
+                        </a>`;
+                }
+                
+                if (assign.file && assign.file !== "#") {
+                    buttonsHtml += `
+                        <a href="${assign.file}" target="_blank" class="file-link">
+                            Скачать задание
+                        </a>`;
+                }
+
+                // Если ссылок нет вообще
+                if (!buttonsHtml) {
+                    buttonsHtml = `<span style="color: #94a3b8; font-size: 0.9rem;">Материалы отсутствуют</span>`;
+                }
+
                 html += `
                     <div class="assignment-item">
                         <button class="assignment-btn" onclick="toggleAssignment(this)">
@@ -613,18 +634,14 @@
                         <div class="assignment-content">
                             <div class="assignment-inner">
                                 <p class="assignment-text">${assign.desc}</p>
-                                <!-- Замените # на реальную ссылку на файл, например: files/report.pdf -->
-                                <a href="${assign.file}" target="_blank" class="file-link">
-                                    Посмотреть задание
-                                </a>
+                                <div style="margin-top: 1rem;">
+                                    ${buttonsHtml}
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            html += `</div>`;
-            app.innerHTML = html;
-        }
 
         function toggleAssignment(btn) {
             const item = btn.parentElement;
